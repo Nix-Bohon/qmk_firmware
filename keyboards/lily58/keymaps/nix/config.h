@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGBLIGHT_HUE_STEP 10
 #define RGBLIGHT_SAT_STEP 17
 #define RGBLIGHT_VAL_STEP 17
-
+#define UNICODE_KEY_MAC KC_LEFT_ALT
 #define UNICODE_SELECTED_MODES UNICODE_MODE_MACOS
 
 // Underglow

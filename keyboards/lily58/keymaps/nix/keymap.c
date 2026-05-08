@@ -6,13 +6,20 @@
 * Unicode stuff
 */
 enum unicode_names {
-    SNEK,
-    SHRUG
+    BANG,
+    IRONY,
+    SNEK
 };
 
 const uint32_t PROGMEM unicode_map[] = {
+    [BANG]  = 0x203D,  // ‽
+    [IRONY] = 0x2E2E,  // ⸮
     [SNEK]  = 0x1F40D, // 🐍
-    [SHRUG] = 0x1F937, // 🤷‍♀️
+};
+
+enum custom_keycodes {
+    HSHRUG = SAFE_RANGE,
+    DANCER = SAFE_RANGE,
 };
 
 enum layer_number {
@@ -53,7 +60,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |   `  |   !  |   @  |   #  |   $  |   %  |-------.    ,-------|   ^  |   &  |   *  |   (  |   )  |   -  |
  * |------+------+------+------+------+------|   [   |    |    ]  |------+------+------+------+------+------|
-2* |  🐍  |  🤷‍♀️  |   Ћ  |      |      |      |-------|    |-------|      |   _  |   +  |   {  |   }  |   |  |
+2* |  🐍  |  🤷‍♀️  |   Ћ  |  ツ  |  ✅  |      |-------|    |-------|      |   _  |   +  |   {  |   }  |   |  |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *                   | LAlt | LGUI |LOWER | /Space  /       \Enter \  |RAISE |BackSP| RGUI |
  *                   |      |      |      |/       /         \      \ |      |      |      |
@@ -64,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_CAD, _______, _______, _______, _______, _______,                   _______, _______, _______,_______, _______, _______,
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,                     KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
   KC_GRV, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                   KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_TILD,
-  UM(SNEK), UM(SHRUG), UC(0x40B), _______, _______, _______, _______, _______, KC_PIPE, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE,
+  UM(SNEK), DANCER, UC(0x40B), UC(0x30C4), UC(0x0CA0), UC(0x2705), _______, _______, KC_PIPE, KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE,
                              _______, _______, _______, _______, _______,  _______, _______, _______
 ),
 /* RAISE ººººººººººººººº¡
@@ -99,7 +106,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      |      |-------.    ,-------|      |      |RGB ON| HUE+ | SAT+ | VAL+ |
+ * |      |      |      |      |      | dbug |-------.    ,-------|      |      |RGB ON| HUE+ | SAT+ | VAL+ |
  * |------+------+------+------+------+------|bootldr|    |       |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------|    |-------|      |      | MODE | HUE- | SAT- | VAL- |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
@@ -110,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT(
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, DB_TOGG,                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                              _______, _______, _______, _______, _______,  _______, _______, _______
   )
@@ -230,6 +237,13 @@ bool oled_task_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         add_keylog(keycode);
+    }
+    if (record->event.pressed) {
+        switch(keycode) {
+            case DANCER:
+                SEND_STRING(SS_LALT("D83D+DC83"));
+                return false;
+        }
     }
     return true;
 }
